@@ -30,3 +30,4 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']);
 Route::get('/biens', [ProprieteController::class, 'index']);
 Route::middleware('auth:api')->get('/transactions', [TransactionController::class, 'index']);
 Route::middleware('auth:api')->post('/transactions/filter', [TransactionController::class, 'filterByDate']);
+Route::middleware('auth:api')->get('/me', [AuthController::class, 'me']);
