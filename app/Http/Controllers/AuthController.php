@@ -156,7 +156,23 @@ public function login(Request $request)
         'message' => 'Connexion réussie.',
         'token' => $token,
         'user' => $user,
+        'profil' => $user->profil,
+        // 'redirect' => $this->getRedirectUrl($user->profil)
+        // 'redirect' => $user->profil == 1 ? '/admin/dashboard' : '/user/dashboard'
     ], 200);
+}
+    private function getRedirectUrl($profil)
+{
+    switch ($role) {
+        case 1:
+            return '/admin/dashboard';
+        case 4:
+            return '/gestionnaire/dashboard';
+        case 0:
+            return '/user/dashboard';
+        default:
+            return '/'; // Redirection par défaut
+    }
 }
 
 

@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/inscription', [AuthController::class, 'inscription']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/getRedirectUrl', [AuthController::class, 'getRedirectUrl']);
 Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
