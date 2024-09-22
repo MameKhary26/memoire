@@ -2,17 +2,40 @@
 
 namespace App\Models;
 use App\Models\Propriete;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Propriete extends Model
 {
+
+    protected $fillable = [
+        'typePropriete',
+        'adresse',
+        'prix',
+        'statutPropriete',
+        'description',
+        'superficie',
+        'user_id',
+    ];
+
+    public function proprietaire()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
     public function index(Request $request)
     {
         // Récupérer les critères de recherche
         $adresse = $request->input('adresse');
-        $type = $request->input('type');
+        $type = $request->input('typePropriete');
         $prix = $request->input('prix');
+
+        
         // $prix_max = $request->input('prix_max');
         // $superficie_min = $request->input('superficie_min');
         // $superficie_max = $request->input('superficie_max');
@@ -49,4 +72,10 @@ class Propriete extends Model
 
         return response()->json($biens);
     }
+
+    public static function getDispo()
+    {
+        return self::where('statutPropriete', 'disponible')->get();
+    }
+
 }

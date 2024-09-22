@@ -57,4 +57,12 @@ class UserController extends Controller
         $user->delete();
         return response()->json(null, 204);
     }
+    public function getProprietaire()
+    {
+        $propio = User::where('profil', "3")->get();
+        return response()->json([
+            'statut' => 201,
+            'data' => $propio
+        ]);
+    }
 }
