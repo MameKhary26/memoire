@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\User;
 use App\Models\Propriete;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -10,6 +11,11 @@ use Illuminate\Support\Facades\Auth;
 class TransactionController extends Controller
 {
 
+    public function indexRecup() {
+        return Transaction::all();
+    }
+
+   
     public function updateTransactionStatus(Request $request, $id)
 {
     $request->validate([
@@ -28,16 +34,17 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
+        
 
     // Valider les données
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'propriete_id' => 'required|exists:proprietes,id',
-        'typeTransaction' => 'required|in:location,vente',
-        'montant' => 'required|numeric',
-        'dateTransaction' => 'required|date',
-        'statutTransaction' => 'required|string',
-    ]);
+    // $request->validate([
+    //     'user_id' => 'required',
+    //     'propriete_id' => 'required',
+    //     'typeTransaction' => 'required',
+    //     'montant' => 'required',
+    //     'dateTransaction' => 'required',
+    //     'statutTransaction' => 'required',
+    // ]);
 
     // Récupérer les données nécessaires
     $user = User::find($request->user_id);
@@ -48,9 +55,9 @@ class TransactionController extends Controller
         'user_id' => $user->id,
         'propriete_id' => $propriete->id,
         'typeTransaction' => $request->typeTransaction,
-        'statutTransaction' => $request->statutTransaction,
+        'statutTransaction' => 'en attente',
         'montant' => $request->montant,
-        'date_transaction' => now(),
+        'dateTransaction' => now(),
     ]);
 
     $transaction->save();
@@ -61,15 +68,69 @@ class TransactionController extends Controller
     ], 201);
 }
 
+public function mesTransactions()
+{
+    // Récupérer l'utilisateur connecté
+    $user = auth()->user();
+
+    // Vérifier que l'utilisateur est authentifié
+    if (!$user) {
+        return response()->json(['error' => 'Utilisateur non authentifié'], 401);
+    }
+
+    // Récupérer toutes les transactions effectuées par cet utilisateur
+    $transactions = Transaction::where('user_id', $user->id)->get();
+
+    // Retourner les transactions sous forme de JSON
+    return response()->json([
+        'transactions' => $transactions
+    ], 200);
+}
+
+public function storeVente(Request $request)
+    {
+
+    // Valider les données
+    // $request->validate([
+    //     'user_id' => 'required',
+    //     'propriete_id' => 'required',
+    //     'typeTransaction' => 'required',
+    //     'montant' => 'required',
+    //     'dateTransaction' => 'required',
+    //     'statutTransaction' => 'required',
+    // ]);
+
+    // Récupérer les données nécessaires
+    $user = User::find($request->user_id);
+    $propriete = Propriete::find($request->propriete_id);
+
+    // Créer la transaction
+    $transaction = new Transaction([
+        'user_id' => $user->id,
+        'propriete_id' => $propriete->id,
+        'typeTransaction' => $request->typeTransaction,
+        'statutTransaction' => 'en attente',
+        'montant' => $request->montant,
+        'dateTransaction' => now(),
+    ]);
+
+    $transaction->save();
+
+    return response()->json([
+        'message' => 'Transaction de type vente effectuée avec succès.',
+        'transaction' => $transaction
+    ], 201);
+}
+
     public function index()
     {
-            return Transaction::all();
-    
+        
+        return Transaction::all();
 
         // Récupérer les transactions de l'utilisateur connecté
-        $transactions = Transaction::where('user_id', Auth::id())->get();
+        // $transactions = Transaction::where('user_id', Auth::id())->get();
 
-        return response()->json($transactions);
+        // return response()->json($transactions);
     }
 
     public function filterByDate(Request $request)

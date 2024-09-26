@@ -51,7 +51,7 @@ class AuthController extends Controller
             $data['motPasse'] = Hash::make($data['motPasse']);
 
             // Définir le statut par défaut à "debloquer"
-            $data['profil'] = 3;
+            $data['profil'] = 2;
 
             // Création de l'utilisateur
             $user = User::create($data);

@@ -34,7 +34,7 @@ class ProprieteController extends Controller
             $query->where('superficie', '>=', $superficie);
         }
         // Exécuter la requête et retourner les résultats
-        $query->where('statutTransaction    ', 'disponible');
+        $query->where('statutTransaction ', 'disponible');
         $biens = $query->get();
         return response()->json($biens);
     }
